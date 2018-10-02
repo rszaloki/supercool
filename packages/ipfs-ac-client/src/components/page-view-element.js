@@ -9,11 +9,17 @@
  */
 
 import { LitElement } from '@polymer/lit-element'
+import { redirect } from '../util.js'
 
 export class PageViewElement extends LitElement {
   // Only render this page if it's actually visible.
   shouldUpdate () {
     return this.active
+  }
+
+  redirect (url) {
+    redirect(url)
+    this.dispatchEvent(new CustomEvent('redirect', { details: { url } }));
   }
 
   static get properties () {

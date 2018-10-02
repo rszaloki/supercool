@@ -32,14 +32,28 @@ class SettingsView extends PageViewElement {
       </style>
       
       <section class="input">
-        <label>set secret:</label>
-        <input type="password">
+        <label>Set new secret:</label>
+        <input type="password" id="secret">
       </section>
       <section class="buttonbar">
-        <mwc-button icon="arrow_back" unelevated>back</mwc-button>
-        <mwc-button icon="done" raised>set secret</mwc-button>
+        <mwc-button icon="arrow_back" unelevated @click="${e => this._back()}">back</mwc-button>
+        <mwc-button icon="done" raised @click="${(e) => this._setSecret(e)}">set secret</mwc-button>
       </section>
     `
+  }
+
+  _setSecret () {
+    const secret = this.shadowRoot.querySelector('#secret')
+    const val = secret.value
+    if (val && val.trim().length) {
+      localStorage.setItem('secret', val)
+      this.dispatchEvent(new CustomEvent('updateSecret'))
+      this.redirect('/button-view')
+    }
+  }
+
+  _back () {
+    this.redirect('/button-view')
   }
 }
 

@@ -51,7 +51,7 @@ ${SharedStyles}
   }
 
   _openSettings () {
-    window.location.href = '/settings-view'
+    this.redirect('/settings-view')
   }
 }
 
