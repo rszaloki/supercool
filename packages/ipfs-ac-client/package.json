@@ -30,7 +30,9 @@
     "@webcomponents/webcomponentsjs": "^2.0.0",
     "ipfs": "^0.32.3",
     "ipfs-pubsub-room": "^1.4.0",
-    "pwa-helpers": "^0.8.2"
+    "pwa-helpers": "^0.8.2",
+    "webpack": "^4.20.2",
+    "webpack-cli": "^3.1.2"
   },
   "devDependencies": {
     "axe-core": "^3.0.0",

@@ -19,6 +19,8 @@ import './my-view404.js'
 import './button-view.js'
 import './settings-view.js'
 
+import { startListener, sendMessage } from '../ipfs-comm.js'
+
 class MyApp extends LitElement {
   render () {
     const { _page, _snackbarOpened, _offline } = this
@@ -64,11 +66,21 @@ class MyApp extends LitElement {
 
     <!-- Main content -->
     <main role="main" class="main-content">
-      <button-view class="page" ?active="${_page === 'button-view'}" @redirect="${e => this._locationChanged(window.location)}"></button-view>
-      <settings-view class="page" ?active="${_page === 'settings-view'}" @updateSecret="${e => this._updateSecret()}" @redirect="${e => this._locationChanged(window.location)}"></settings-view>
+      <button-view 
+        class="page" 
+        .connected="${this.connected}" 
+        .isOn="${this.isOn}"
+        @isOnChange="${e => this._updateAc(e.detail)}"
+        ?active="${_page === 'button-view'}" 
+        @redirect="${e => this._locationChanged(window.location)}"></button-view>
+      <settings-view 
+        class="page"
+        ?active="${_page === 'settings-view'}" 
+        @updateSecret="${ e => this._updateSecret()}" 
+        @redirect="${e => this._locationChanged(window.location)}"></settings-view>
       <my-view404 class="page" ?active="${_page === 'view404'}"></my-view404>
     </main>
-
+    
     <snack-bar ?active="${_snackbarOpened}">
         You are now ${_offline ? 'offline' : 'online'}.</snack-bar>
     `
@@ -80,13 +92,18 @@ class MyApp extends LitElement {
       _page: { type: String },
       _drawerOpened: { type: Boolean },
       _snackbarOpened: { type: Boolean },
-      _offline: { type: Boolean }
+      _offline: { type: Boolean },
+      connected: { type: Boolean },
+      isOn: { type: Boolean }
     }
   }
 
   constructor () {
     super()
     this._drawerOpened = false
+    this.connected = false
+    this.isOn = false
+    this.updating = false
     // To force all event listeners for gestures to be passive.
     // See https://www.polymer-project.org/3.0/docs/devguide/settings#setting-passive-touch-gestures
     setPassiveTouchGestures(true)
@@ -102,9 +119,32 @@ class MyApp extends LitElement {
     installOfflineWatcher((offline) => this._offlineChanged(offline))
     installMediaQueryWatcher(`(min-width: 460px)`,
       (matches) => this._layoutChanged(matches))
+    startListener({
+      connectionCallback: peer => {
+        if (peer) {
+          console.log(`server peer: ${peer}`)
+          this.connected = true
+        } else {
+          console.log(`no connection with the server`)
+          this.connected = false
+        }
+      },
+      messageCallback: data => {
+        console.log(data)
+        if (data.hasOwnProperty('acIsOn') && !this.updating) {
+          this.isOn = data.acIsOn
+        }
+      }
+    })
   }
 
-  updated (changedProps) {
+  _updateAc (newState) {
+    if (!this.updating) {
+      this.updating = true
+      sendMessage({ setAc: newState }).then(() => {
+        setInterval(() => (this.updating = false), 1000)
+      })
+    }
   }
 
   _layoutChanged (isWideLayout) {

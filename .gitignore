@@ -1,3 +1,5 @@
 # Created by .ignore support plugin (hsz.mobi)
 packages/ipfs-ac-client/build
 packages/ipfs-ac-client/server/build
+packages/ipfs-ac-server/supercool-repo
+packages/ipfs-ac-client/dist
