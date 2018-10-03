@@ -10,7 +10,11 @@ const ipfs = new IPFS({
     pubsub: true
   },
   config: {
-    Bootstrap: ['/ip4/127.0.0.1/tcp/9999/ws/ipfs/QmQRygvS2PAbk5yKEft8f8HryJr8WoEKp82gctE1NvNR6X']
+    Addresses: {
+      Swarm: [
+        '/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star'
+      ]
+    }
   }
 })
 
