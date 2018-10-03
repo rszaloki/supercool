@@ -3,11 +3,11 @@ const ON = true
 
 let currentState = OFF
 
-function setState(newState) {
+function setState (newState) {
   currentState = newState
 }
 
-function getState() {
+function getState () {
   return currentState
 }
 

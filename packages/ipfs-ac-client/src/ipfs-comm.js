@@ -1,7 +1,11 @@
 import Room from 'ipfs-pubsub-room'
 import IPFS from 'ipfs'
 
+function repo () {
+  return 'ipfs/supercool/' + Math.random()
+}
 const ipfs = new IPFS({
+  repo: repo(),
   EXPERIMENTAL: {
     pubsub: true
   },
@@ -25,7 +29,7 @@ const setServer = (peer, callback) => {
   }
 }
 
-let comm = Promise.reject('not initialized!')
+let comm = null
 
 export const sendMessage = message => comm.then(room => {
   if (serverPeer) {

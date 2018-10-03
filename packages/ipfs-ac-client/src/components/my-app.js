@@ -131,7 +131,7 @@ class MyApp extends LitElement {
       },
       messageCallback: data => {
         console.log(data)
-        if (data.hasOwnProperty('acIsOn') && !this.updating) {
+        if (data.hasOwnProperty('acIsOn') && !this.updating && this.isOn !== data.acIsOn) {
           this.isOn = data.acIsOn
         }
       }
@@ -139,7 +139,7 @@ class MyApp extends LitElement {
   }
 
   _updateAc (newState) {
-    if (!this.updating) {
+    if (!this.updating && this.isOn !== newState) {
       this.updating = true
       sendMessage({ setAc: newState }).then(() => {
         setInterval(() => (this.updating = false), 1000)
@@ -169,10 +169,12 @@ class MyApp extends LitElement {
   _locationChanged (loc) {
     const path = window.decodeURIComponent(window.location.pathname)
     let page = path === '/' ? 'button-view' : path.slice(1)
-
+/*
     if (!this._secret || !this._secret.trim().length) {
       page = 'settings-view'
     }
+*/
+
     this._page = page
   }
 }
